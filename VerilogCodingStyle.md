@@ -989,8 +989,8 @@ endmodule
 | Variables, functions, tasks          | `lower_snake_case`      |
 | Named code blocks                    | `lower_snake_case`      |
 | \`define macros                      | `ALL_CAPS`              |
-| Tunable parameters for parameterized modules, classes, and interfaces | `UpperCamelCase` |
-| Constants                            | `ALL_CAPS` or `UpperCamelCase` |
+| Tunable parameters for parameterized modules, classes, and interfaces | `ALL_CAPS` |
+| Constants                            | `ALL_CAPS`              |
 | Enumeration types                    | `lower_snake_case_e`    |
 | Other typedef types                  | `lower_snake_case_t`    |
 | Enumerated value names               | `UpperCamelCase`        |
@@ -1019,17 +1019,17 @@ Define project-wide constants in the project's main package.
 Other packages may also be declared with their own `parameter` constants to
 facilitate the creation of IP that may be re-used across many projects.
 
-The preferred naming convention for all immutable constants is to use `ALL_CAPS`, but there are times when the use of `UpperCamelCase` might be considered more natural.
+The preferred naming convention for all immutable constants is to use `ALL_CAPS`, and `L_ALL_CAPS` for local parameters.
 
 | Constant Type | Style Preference | Conversation |
 | ---- | ---- | ---- |
 | \`define            | `ALL_CAPS`       | Truly constant |
-| module parameter    | `UpperCamelCase` | truly modifiable by instantiation, not constant |
-| derived localparam  | `UpperCamelCase` | while not modified directly, still tracks module parameter |
-| tuneable localparam | `UpperCamelCase` | while not expected to change upon final RTL version, is used by designer to explore the design space conveniently |
-| true localparam constant | `ALL_CAPS`  | Example `localparam OP_JALR = 8'hA0;` |
+| module parameter    | `ALL_CAPS` | truly modifiable by instantiation, not constant |
+| derived localparam  | `L_ALL_CAPS` | while not modified directly, still tracks module parameter |
+| tuneable localparam | `L_ALL_CAPS` | while not expected to change upon final RTL version, is used by designer to explore the design space conveniently |
+| true localparam constant | `L_ALL_CAPS`  | Example `localparam L_OP_JALR = 8'hA0;` |
 | enum member true constant | `ALL_CAPS` | Example `typedef enum ... { OP_JALR = 8'hA0;` |
-| enum set member | `ALL_CAPS` or `UpperCamelCase`     | Example `typedef enum ... { ST_IDLE, ST_FRAME_START, ST_DYN_INSTR_READ ...`, `typedef enum ... { StIdle, StFrameStart, StDynInstrRead...`. A collection of arbitrary values, could be either convention. |
+| enum set member | `ALL_CAPS`    | Example `typedef enum ... { ST_IDLE, ST_FRAME_START, ST_DYN_INSTR_READ ...`, . A collection of arbitrary values, could be either convention. |
 
 The units for a constant should be described in the symbol name, unless the
 constant is unitless or the units are "bits." For example, `FooLengthBytes`.
@@ -1058,16 +1058,15 @@ design re-use.
 Use the keyword `parameter` within the `module` declaration of a parameterized
 module to indicate what parameters the user is expected to tune at
 instantiation. The preferred naming convention for all parameters is
-`UpperCamelCase`. Some projects may choose to use `ALL_CAPS` to differentiate
-tuneable parameters from constants.
+`ALL_CAPS`.
 
 Derived parameters within the `module` declaration should use `localparam`.
 An example is shown below.
 
 ```systemverilog
 module modname #(
-  parameter  int Depth  = 2048,         // 8kB default
-  localparam int Aw     = $clog2(Depth) // derived parameter
+  parameter  int DEPTH  = 2048,         // 8kB default
+  localparam int L_AW   = $clog2(Depth) // derived parameter
 ) (
   ...
 );
@@ -1153,7 +1152,7 @@ table lists the suffixes that have special meaning.
 | `_n`, `_p`        | signal name | Differential pair, active low and active high |
 | `_d`, `_q`        | signal name | Input and output of register |
 | `_q2`,`_q3`, etc  | signal name | Pipelined versions of signals; `_q` is one cycle of latency, `_q2` is two cycles, `_q3` is three, etc |
-| `_i`, `_o`, `_io` | signal name | Module inputs, outputs, and bidirectionals |
+
 
 When multiple suffixes are necessary use the following guidelines:
 
@@ -1206,8 +1205,7 @@ endmodule // simple
 
 ### Enumerations
 
-***Name enumeration types `snake_case_e`.  Name enumeration values `ALL_CAPS` or
-`UpperCamelCase`.***
+***Name enumeration types `snake_case_e`.  Name enumeration values `ALL_CAPS`.***
 
 Always name `enum` types using `typedef`. The storage type of any enumerated
 type must be specified. For synthesizable enums, the storage type must be a
@@ -1222,7 +1220,7 @@ and underscores. You must suffix enumeration type names with `_e`.
 Enumeration value names (constants) should typically be `ALL_CAPS`, for example,
 `READY_TO_SEND`, to reflect their constant nature, especially for truly unchangeable
 values like defined opcode assignments.  There are times when `UpperCamelCase`
-might be preferred, when the enumerated type's assigned value is effectively a
+may be preferred, when the enumerated type's assigned value is effectively a
 don't care to the designer, like state machine values.  See the conversation on
 [constants](#constants) for a discussion on how to think of this recommendation.
 
@@ -1291,6 +1289,11 @@ Use whole words. Avoid abbreviations and contractions except in the most common
 places. Favor descriptive signal names over brevity.
 
 #### Prefixes
+
+| Prefix(es)        | Arena | Intent |
+| ---               | :---: | ---    |
+| `i_`, `o_`, `io_` | signal name | Module inputs, outputs, and bidirectionals |
+| `si_`, `mi_`      | signal name | Use the prefix in the interconnect components only. Slave interface in bus, Master interface in bus |
 
 Use common prefixes to identify groups of signals that operate together. For
 example, all elements of an AXI-S interface would share a prefix: `foo_valid`,

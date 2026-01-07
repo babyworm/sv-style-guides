@@ -1,7 +1,8 @@
-# lowRISC Style Guides
+# SystemVerilog Style Guides
 
-This repository contains style guides curated by lowRISC for use in our
-code and documentation.
+This repository contains style guides forked from Coding Guidelines for lowRISC.
+
+It changed slightly to fit with internal usage. 
 
 - [SystemVerilog style guide](VerilogCodingStyle.md)
 - [Coding Style Guide for Design Verification](DVCodingStyle.md)
